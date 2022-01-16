@@ -1,0 +1,24 @@
+# permissions for end users to edit globalmeshes.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: globalmesh-editor-role
+rules:
+- apiGroups:
+  - mesh.open-cluster-management.io
+  resources:
+  - globalmeshes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - mesh.open-cluster-management.io
+  resources:
+  - globalmeshes/status
+  verbs:
+  - get

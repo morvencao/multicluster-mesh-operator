@@ -1,0 +1,6 @@
+apiVersion: mesh.open-cluster-management.io/v1alpha1
+kind: Mesh
+metadata:
+  name: mesh-sample
+spec:
+  # TODO(user): Add fields here
