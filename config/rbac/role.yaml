@@ -1,0 +1,100 @@
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: manager-role
+rules:
+- apiGroups:
+  - mesh.open-cluster-management.io
+  resources:
+  - globalMeshs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - mesh.open-cluster-management.io
+  resources:
+  - globalMeshs/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - mesh.open-cluster-management.io
+  resources:
+  - globalmeshes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - mesh.open-cluster-management.io
+  resources:
+  - globalmeshes/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - mesh.open-cluster-management.io
+  resources:
+  - globalmeshes/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - mesh.open-cluster-management.io
+  resources:
+  - meshes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - mesh.open-cluster-management.io
+  resources:
+  - meshes/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - mesh.open-cluster-management.io
+  resources:
+  - meshes/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - mesh.open-cluster-management.io
+  resources:
+  - meshs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - mesh.open-cluster-management.io
+  resources:
+  - meshs/status
+  verbs:
+  - get
+  - patch
+  - update
