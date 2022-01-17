@@ -33,6 +33,8 @@ import (
 
 	meshv1alpha1 "github.com/morvencao/multicluster-mesh/apis/mesh/v1alpha1"
 	meshcontrollers "github.com/morvencao/multicluster-mesh/controllers/mesh"
+	policyv1 "open-cluster-management.io/governance-policy-propagator/api/v1"
+	placementrulev1 "open-cluster-management.io/multicloud-operators-subscription/pkg/apis/apps/placementrule/v1"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -43,7 +45,8 @@ var (
 
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
-
+	utilruntime.Must(policyv1.AddToScheme(scheme))
+	utilruntime.Must(placementrulev1.AddToScheme(scheme))
 	utilruntime.Must(meshv1alpha1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
@@ -78,11 +81,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&meshcontrollers.MeshReconciler{
+	if err = (&meshcontrollers.DiscoveryReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "Mesh")
+		setupLog.Error(err, "unable to create controller", "controller", "Discovery")
 		os.Exit(1)
 	}
 	if err = (&meshcontrollers.GlobalMeshReconciler{
@@ -100,6 +103,12 @@ func main() {
 	}
 	if err := mgr.AddReadyzCheck("readyz", healthz.Ping); err != nil {
 		setupLog.Error(err, "unable to set up ready check")
+		os.Exit(1)
+	}
+
+	setupLog.Info("add policy controller to manager")
+	if err := mgr.Add(meshcontrollers.NewPolicyController(mgr.GetClient(), mgr.GetScheme())); err != nil {
+		setupLog.Error(err, "unable to add policy controller to manager")
 		os.Exit(1)
 	}
 

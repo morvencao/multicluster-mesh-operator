@@ -9,26 +9,6 @@ rules:
 - apiGroups:
   - mesh.open-cluster-management.io
   resources:
-  - globalMeshs
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - mesh.open-cluster-management.io
-  resources:
-  - globalMeshs/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - mesh.open-cluster-management.io
-  resources:
   - globalmeshes
   verbs:
   - create
@@ -79,9 +59,9 @@ rules:
   - patch
   - update
 - apiGroups:
-  - mesh.open-cluster-management.io
+  - policy.open-cluster-management.io
   resources:
-  - meshs
+  - policies
   verbs:
   - create
   - delete
@@ -91,9 +71,15 @@ rules:
   - update
   - watch
 - apiGroups:
-  - mesh.open-cluster-management.io
+  - policy.open-cluster-management.io
   resources:
-  - meshs/status
+  - policies/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - policy.open-cluster-management.io
+  resources:
+  - policies/status
   verbs:
   - get
   - patch
