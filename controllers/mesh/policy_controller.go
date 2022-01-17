@@ -52,6 +52,10 @@ var (
 				&policyv1.PolicyTemplate{
 					ObjectDefinition: runtime.RawExtension{
 						Object: &configpolicyv1.ConfigurationPolicy{
+							TypeMeta: metav1.TypeMeta{
+								APIVersion: "policy.open-cluster-management.io/v1",
+								Kind:       "ConfigurationPolicy",
+							},
 							ObjectMeta: metav1.ObjectMeta{
 								Name: smcpPolicyName,
 							},

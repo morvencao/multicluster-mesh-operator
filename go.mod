@@ -3,8 +3,12 @@ module github.com/morvencao/multicluster-mesh
 go 1.16
 
 require (
+	github.com/go-logr/logr v0.4.0
+	github.com/hasura/go-graphql-client v0.6.2
 	github.com/onsi/ginkgo v1.16.4
 	github.com/onsi/gomega v1.15.0
+	golang.org/x/net v0.0.0-20220114011407-0dd24b26b47d // indirect
+	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	k8s.io/apimachinery v0.22.1
 	k8s.io/client-go v12.0.0+incompatible
 	k8s.io/code-generator v0.22.1
