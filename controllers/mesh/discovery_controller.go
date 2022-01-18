@@ -23,6 +23,7 @@ import (
 
 	"github.com/go-logr/logr"
 
+	"k8s.io/apimachinery/pkg/api/equality"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
@@ -36,12 +37,21 @@ import (
 
 	constants "github.com/morvencao/multicluster-mesh/pkg/constants"
 	graphql "github.com/morvencao/multicluster-mesh/pkg/graphql"
+	translate "github.com/morvencao/multicluster-mesh/pkg/translate"
 	policyv1 "open-cluster-management.io/governance-policy-propagator/api/v1"
+
+	meshv1alpha1 "github.com/morvencao/multicluster-mesh/apis/mesh/v1alpha1"
 )
 
 const (
 	nonComplianceNoMappingResourcesErr = "couldn't find mapping resource with kind"
 )
+
+var MeshMap map[string]bool
+
+func init() {
+	MeshMap = make(map[string]bool)
+}
 
 // DiscoveryReconciler reconciles a Policy object
 type DiscoveryReconciler struct {
@@ -78,6 +88,11 @@ func (r *DiscoveryReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return ctrl.Result{}, err
 	}
 
+	err = r.pruneMeshes()
+	if err != nil {
+		return ctrl.Result{}, err
+	}
+
 	return ctrl.Result{}, nil
 }
 
@@ -109,15 +124,37 @@ func (r *DiscoveryReconciler) SetupWithManager(mgr ctrl.Manager) error {
 func (r *DiscoveryReconciler) discoveryMeshFromPolicyStatus(compliancePerClusterStatus []*policyv1.CompliancePerClusterStatus, log logr.Logger) error {
 	clusterSmcpMap, err := r.getClusterSmcp(compliancePerClusterStatus, log)
 	if err != nil {
+		log.Error(err, "failed to get cluster-SMCP map")
 		return err
 	}
-
-	log.Info("========", "clusterSmcpMap", clusterSmcpMap)
+	log.Info("get the cluster-SMCP", "clusterSmcpMap", clusterSmcpMap)
 
 	for clusterName, smcpLists := range clusterSmcpMap {
 		for _, smcpNamespacedName := range smcpLists {
 			namespacedName := strings.Split(smcpNamespacedName, "/")
-			graphql.QuerySmcp(namespacedName[0], namespacedName[1], clusterName)
+			smcpJson, err := graphql.QueryK8sResource("maistra.io/v2", "ServiceMeshControlPlane", namespacedName[0], namespacedName[1], clusterName)
+			if err != nil {
+				log.Error(err, "failed to get the SMCP from graphql", "name", namespacedName[0], "namespace", namespacedName[1], "cluster", clusterName)
+				return err
+			}
+			log.Info("get the SMCP", "SMCP", string(smcpJson))
+			// the ServiceMeshMemberRoll resource is created in the same namespace as ServiceMeshControlPlane with fixed name "default"
+			smmrJson, err := graphql.QueryK8sResource("maistra.io/v1", "ServiceMeshMemberRoll", "default", namespacedName[1], clusterName)
+			if err != nil {
+				log.Error(err, "failed to get the SMMR from graphql", "name", "default", "namespace", namespacedName[1], "cluster", clusterName)
+				return err
+			}
+			log.Info("get the SMMR", "SMMR", string(smmrJson))
+			mesh, err := translate.TranslateToMesh(smcpJson, smmrJson, clusterName)
+			if err != nil {
+				log.Error(err, "failed to translate to mesh")
+				return err
+			}
+			err = r.createOrUpdateMesh(mesh, log)
+			if err != nil {
+				return err
+			}
+			MeshMap[mesh.GetName()] = true
 		}
 	}
 
@@ -210,4 +247,90 @@ func getSmcpList(msg string) ([]string, error) {
 	}
 
 	return res, nil
+}
+
+func (r *DiscoveryReconciler) createOrUpdateMesh(mesh *meshv1alpha1.Mesh, log logr.Logger) error {
+	// create or update mesh
+	foundMesh := &meshv1alpha1.Mesh{}
+	err := r.Client.Get(
+		context.TODO(),
+		types.NamespacedName{
+			Name:      mesh.GetName(),
+			Namespace: constants.ACMNamespace,
+		},
+		foundMesh)
+	if err != nil {
+		if apierrors.IsNotFound(err) {
+			// create new mesh
+			if err := r.Client.Create(context.TODO(), mesh); err != nil {
+				log.Error(err, "failed to create the mesh", "name", mesh.GetName())
+				return err
+			}
+			log.Info("created the mesh", "name", mesh.GetName())
+			emptyMeshStatus := meshv1alpha1.MeshStatus{}
+			if !equality.Semantic.DeepDerivative(mesh.Status, emptyMeshStatus) { // update mesh status if it is not empty
+				if err := r.Client.Status().Update(context.TODO(), mesh); err != nil {
+					log.Error(err, "failed to update the mesh status", "name", mesh.GetName())
+					return err
+				}
+			}
+		} else {
+			// failed to get the mesh
+			log.Error(err, "failed to get the mesh", "name", mesh.GetName())
+			return err
+		}
+	} else {
+		// there is an existing mesh
+		// update if they are equal, update the existing mesh if they are not equal
+		if !equality.Semantic.DeepDerivative(mesh.Spec, foundMesh.Spec) {
+			log.Info("found difference between new mesh and existing mesh spec, updating...")
+			// updated the mesh
+			mesh.ObjectMeta.ResourceVersion = foundMesh.ObjectMeta.ResourceVersion
+			if err := r.Client.Update(context.TODO(), mesh); err != nil {
+				// failed to update the mesh
+				log.Error(err, "failed to update the mesh")
+				return err
+			}
+			log.Info("updated the mesh", "name", mesh.GetName())
+		} else if !equality.Semantic.DeepDerivative(mesh.Status, foundMesh.Status) {
+			log.Info("found difference between new mesh and existing mesh status, updating...")
+			// updated the mesh
+			mesh.ObjectMeta.ResourceVersion = foundMesh.ObjectMeta.ResourceVersion
+			if err := r.Client.Status().Update(context.TODO(), mesh); err != nil {
+				// failed to update the mesh status
+				log.Error(err, "failed to update the mesh status")
+				return err
+			}
+			log.Info("updated the mesh status", "name", mesh.GetName())
+		} else {
+			log.Info("new mesh and existing mesh are the same, no action needed.")
+		}
+	}
+	return nil
+}
+
+func (r *DiscoveryReconciler) pruneMeshes() error {
+	foundMesh := &meshv1alpha1.Mesh{}
+	for m, ok := range MeshMap {
+		if !ok {
+			err := r.Client.Get(
+				context.TODO(),
+				types.NamespacedName{
+					Name:      m,
+					Namespace: constants.ACMNamespace,
+				},
+				foundMesh)
+			if err != nil {
+				if apierrors.IsNotFound(err) {
+					// do nothing
+					continue
+				}
+				return err
+			}
+			if err := r.Client.Delete(context.TODO(), foundMesh); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }

@@ -18,24 +18,27 @@ package v1alpha1
 
 import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	maistrav2 "maistra.io/api/core/v2"
 )
-
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
 // MeshSpec defines the desired state of Mesh
 type MeshSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	Cluster        string            `json:"cluster,omitempty"`
+	ControlPlane   *MeshControlPlane `json:"controlPlane,omitempty"`
+	MeshMemberRoll []string          `json:"meshMemberRoll,omitempty"`
+	TrustDomain    string            `json:"trustDomain,omitempty"`
+}
 
-	// Foo is an example field of Mesh. Edit mesh_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+// MeshControlPlane defines the mesh control plane
+type MeshControlPlane struct {
+	Namespace  string   `json:"namespace,omitempty"`
+	Version    string   `json:"version,omitempty"`
+	Components []string `json:"components,omitempty"`
 }
 
 // MeshStatus defines the observed state of Mesh
 type MeshStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	Readiness maistrav2.ReadinessStatus `json:"readiness"`
 }
 
 // +genclient
