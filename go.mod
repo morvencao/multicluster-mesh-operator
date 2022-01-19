@@ -9,6 +9,7 @@ require (
 	github.com/onsi/gomega v1.15.0
 	github.com/thedevsaddam/gojsonq/v2 v2.5.2
 	golang.org/x/net v0.0.0-20220114011407-0dd24b26b47d // indirect
+	k8s.io/api v0.22.1
 	k8s.io/apimachinery v0.22.1
 	k8s.io/client-go v12.0.0+incompatible
 	k8s.io/code-generator v0.22.1

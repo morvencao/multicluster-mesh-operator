@@ -88,6 +88,13 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Discovery")
 		os.Exit(1)
 	}
+	if err = (&meshcontrollers.MeshReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Mesh")
+		os.Exit(1)
+	}
 	if err = (&meshcontrollers.GlobalMeshReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),

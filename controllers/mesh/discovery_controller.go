@@ -68,19 +68,12 @@ func (r *DiscoveryReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 
 	policyInstance := &policyv1.Policy{}
 	err := r.Client.Get(context.TODO(), types.NamespacedName{
-		Name:      smcpPolicyName,
+		Name:      smcpDiscoveryPolicyName,
 		Namespace: constants.ACMNamespace,
 	}, policyInstance)
-
 	if err != nil {
-		if apierrors.IsNotFound(err) {
-			// Request object not found, could have been deleted after reconcile request.
-			// Owned objects are automatically garbage collected. For additional cleanup logic use finalizers.
-			// Return and don't requeue
-			return ctrl.Result{}, nil
-		}
-		// Error reading the object - requeue the request.
-		return ctrl.Result{}, err
+		log.Error(err, "unable to fetch Policy")
+		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
 	err = r.discoveryMeshFromPolicyStatus(policyInstance.Status.Status, log)
@@ -100,13 +93,13 @@ func (r *DiscoveryReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 func (r *DiscoveryReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	policyPred := predicate.Funcs{
 		CreateFunc: func(e event.CreateEvent) bool {
-			if e.Object.GetName() == smcpPolicyName && e.Object.GetNamespace() == constants.ACMNamespace {
+			if e.Object.GetName() == smcpDiscoveryPolicyName && e.Object.GetNamespace() == constants.ACMNamespace {
 				return true
 			}
 			return false
 		},
 		UpdateFunc: func(e event.UpdateEvent) bool {
-			if e.ObjectNew.GetName() == smcpPolicyName && e.ObjectNew.GetNamespace() == constants.ACMNamespace {
+			if e.ObjectNew.GetName() == smcpDiscoveryPolicyName && e.ObjectNew.GetNamespace() == constants.ACMNamespace {
 				return e.ObjectOld.GetResourceVersion() != e.ObjectNew.GetResourceVersion()
 			}
 			return false
@@ -137,15 +130,15 @@ func (r *DiscoveryReconciler) discoveryMeshFromPolicyStatus(compliancePerCluster
 				log.Error(err, "failed to get the SMCP from graphql", "name", namespacedName[0], "namespace", namespacedName[1], "cluster", clusterName)
 				return err
 			}
-			log.Info("get the SMCP", "SMCP", string(smcpJson))
+			//log.Info("get the SMCP", "SMCP", string(smcpJson))
 			// the ServiceMeshMemberRoll resource is created in the same namespace as ServiceMeshControlPlane with fixed name "default"
 			smmrJson, err := graphql.QueryK8sResource("maistra.io/v1", "ServiceMeshMemberRoll", "default", namespacedName[1], clusterName)
 			if err != nil {
 				log.Error(err, "failed to get the SMMR from graphql", "name", "default", "namespace", namespacedName[1], "cluster", clusterName)
 				return err
 			}
-			log.Info("get the SMMR", "SMMR", string(smmrJson))
-			mesh, err := translate.TranslateToMesh(smcpJson, smmrJson, clusterName)
+			//log.Info("get the SMMR", "SMMR", string(smmrJson))
+			mesh, err := translate.TranslateToLogicMesh(smcpJson, smmrJson, clusterName)
 			if err != nil {
 				log.Error(err, "failed to translate to mesh")
 				return err
@@ -171,7 +164,7 @@ func (r *DiscoveryReconciler) getClusterSmcp(compliancePerClusterStatus []*polic
 			continue // skip compliance cluster
 		}
 		if err := r.Client.Get(context.TODO(), types.NamespacedName{
-			Name:      constants.ACMNamespace + "." + smcpPolicyName,
+			Name:      constants.ACMNamespace + "." + smcpDiscoveryPolicyName,
 			Namespace: v.ClusterNamespace,
 		}, clusterPolicyInstance); err != nil {
 			log.Error(err, "failed to get the cluster level policy")
@@ -180,7 +173,7 @@ func (r *DiscoveryReconciler) getClusterSmcp(compliancePerClusterStatus []*polic
 
 		if clusterPolicyInstance.Status.ComplianceState != policyv1.NonCompliant {
 			err := fmt.Errorf("incorrect status for cluster level policy and global policy")
-			log.Error(err, "incorrect status", "policy name", clusterPolicyInstance.GetName(), "policy namespace", clusterPolicyInstance.GetNamespace())
+			//log.Error(err, "incorrect status", "policy name", clusterPolicyInstance.GetName(), "policy namespace", clusterPolicyInstance.GetNamespace())
 			return nil, err
 		}
 

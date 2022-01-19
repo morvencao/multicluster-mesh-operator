@@ -34,7 +34,8 @@ spec:
           metadata:
             type: object
           spec:
-            description: MeshSpec defines the desired state of Mesh
+            description: MeshSpec defines the desired state of physical service mesh
+              in a managed cluster
             properties:
               cluster:
                 type: string
@@ -47,9 +48,15 @@ spec:
                     type: array
                   namespace:
                     type: string
+                  profiles:
+                    items:
+                      type: string
+                    type: array
                   version:
                     type: string
                 type: object
+              existing:
+                type: boolean
               meshMemberRoll:
                 items:
                   type: string

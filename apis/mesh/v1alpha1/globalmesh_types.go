@@ -20,16 +20,20 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
-// GlobalMeshSpec defines the desired state of GlobalMesh
+// GlobalMeshSpec defines the desired state of GlobalMesh of a central view
 type GlobalMeshSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	Meshes []MeshFederation `json:"meshes,omitempty"`
+}
 
-	// Foo is an example field of GlobalMesh. Edit globalmesh_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+// MeshFederation defines the mesh and its peers
+type MeshFederation struct {
+	Name  string     `json:"name,omitempty"`
+	Peers []MeshPeer `json:"peers,omitempty"`
+}
+
+// MeshPeer defines the mesh peer information
+type MeshPeer struct {
+	Name string `json:"meshes,omitempty"`
 }
 
 // GlobalMeshStatus defines the observed state of GlobalMesh

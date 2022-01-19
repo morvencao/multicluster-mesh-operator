@@ -21,8 +21,9 @@ import (
 	maistrav2 "maistra.io/api/core/v2"
 )
 
-// MeshSpec defines the desired state of Mesh
+// MeshSpec defines the desired state of physical service mesh in a managed cluster
 type MeshSpec struct {
+	Existing       bool              `json:"existing,omitempty"`
 	Cluster        string            `json:"cluster,omitempty"`
 	ControlPlane   *MeshControlPlane `json:"controlPlane,omitempty"`
 	MeshMemberRoll []string          `json:"meshMemberRoll,omitempty"`
@@ -33,6 +34,7 @@ type MeshSpec struct {
 type MeshControlPlane struct {
 	Namespace  string   `json:"namespace,omitempty"`
 	Version    string   `json:"version,omitempty"`
+	Profiles   []string `json:"profiles,omitempty"`
 	Components []string `json:"components,omitempty"`
 }
 

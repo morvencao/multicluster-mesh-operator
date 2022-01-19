@@ -34,12 +34,25 @@ spec:
           metadata:
             type: object
           spec:
-            description: GlobalMeshSpec defines the desired state of GlobalMesh
+            description: GlobalMeshSpec defines the desired state of GlobalMesh of
+              a central view
             properties:
-              foo:
-                description: Foo is an example field of GlobalMesh. Edit globalmesh_types.go
-                  to remove/update
-                type: string
+              meshes:
+                items:
+                  description: MeshFederation defines the mesh and its peers
+                  properties:
+                    name:
+                      type: string
+                    peers:
+                      items:
+                        description: MeshPeer defines the mesh peer information
+                        properties:
+                          meshes:
+                            type: string
+                        type: object
+                      type: array
+                  type: object
+                type: array
             type: object
           status:
             description: GlobalMeshStatus defines the observed state of GlobalMesh
