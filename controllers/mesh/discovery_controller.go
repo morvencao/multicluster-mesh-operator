@@ -29,6 +29,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	"sigs.k8s.io/controller-runtime/pkg/builder"
@@ -76,7 +77,12 @@ func (r *DiscoveryReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
-	err = r.discoveryMeshFromPolicyStatus(policyInstance.Status.Status, log)
+	// reset mesh map
+	for m := range MeshMap {
+		MeshMap[m] = false
+	}
+
+	err = r.discoveryMeshFromPolicyStatus(policyInstance, log)
 	if err != nil {
 		return ctrl.Result{}, err
 	}
@@ -114,8 +120,8 @@ func (r *DiscoveryReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Complete(r)
 }
 
-func (r *DiscoveryReconciler) discoveryMeshFromPolicyStatus(compliancePerClusterStatus []*policyv1.CompliancePerClusterStatus, log logr.Logger) error {
-	clusterSmcpMap, err := r.getClusterSmcp(compliancePerClusterStatus, log)
+func (r *DiscoveryReconciler) discoveryMeshFromPolicyStatus(discoveryPolicy *policyv1.Policy, log logr.Logger) error {
+	clusterSmcpMap, err := r.getClusterSmcp(discoveryPolicy.Status.Status, log)
 	if err != nil {
 		log.Error(err, "failed to get cluster-SMCP map")
 		return err
@@ -142,6 +148,11 @@ func (r *DiscoveryReconciler) discoveryMeshFromPolicyStatus(compliancePerCluster
 			if err != nil {
 				log.Error(err, "failed to translate to mesh")
 				return err
+			}
+			if mesh != nil {
+				if err := controllerutil.SetControllerReference(discoveryPolicy, mesh, r.Scheme); err != nil {
+					log.Error(err, "failed to set controller reference", "name", mesh.GetName())
+				}
 			}
 			err = r.createOrUpdateMesh(mesh, log)
 			if err != nil {

@@ -29,6 +29,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	meshv1alpha1 "github.com/morvencao/multicluster-mesh/apis/mesh/v1alpha1"
@@ -40,6 +41,12 @@ import (
 	configpolicyv1 "open-cluster-management.io/config-policy-controller/api/v1"
 	policyv1 "open-cluster-management.io/governance-policy-propagator/api/v1"
 	placementrulev1 "open-cluster-management.io/multicloud-operators-subscription/pkg/apis/apps/placementrule/v1"
+)
+
+const (
+	smcpEnforcePolicySuffix           = "policy-smcp-enforce-"
+	smcpEnforcePlacementRuleSuffix    = "placement-policy-smcp-enforce-"
+	smcpEnforcePlacementBindingSuffix = "binding-policy-smcp-enforce-"
 )
 
 // MeshReconciler reconciles a Mesh object
@@ -73,7 +80,7 @@ func (r *MeshReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		return ctrl.Result{}, err
 	}
 
-	if err := r.buildAndApplyPolicyForSM(smcp, smmr, cluster, log); err != nil {
+	if err := r.buildAndApplyPolicyForSM(mesh, smcp, smmr, cluster, log); err != nil {
 		log.Error(err, "failed to apply the enforce policy for mesh")
 		return ctrl.Result{}, err
 	}
@@ -88,7 +95,7 @@ func (r *MeshReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Complete(r)
 }
 
-func (r *MeshReconciler) buildAndApplyPolicyForSM(smcp *maistrav2.ServiceMeshControlPlane, smmr *maistrav1.ServiceMeshMemberRoll, cluster string, log logr.Logger) error {
+func (r *MeshReconciler) buildAndApplyPolicyForSM(mesh *meshv1alpha1.Mesh, smcp *maistrav2.ServiceMeshControlPlane, smmr *maistrav1.ServiceMeshMemberRoll, cluster string, log logr.Logger) error {
 	smcpNs := &corev1.Namespace{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
@@ -131,7 +138,7 @@ func (r *MeshReconciler) buildAndApplyPolicyForSM(smcp *maistrav2.ServiceMeshCon
 
 	smcpEnforcePolicy := &policyv1.Policy{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      smcp.GetName(),
+			Name:      smcpEnforcePolicySuffix + smcp.GetName(),
 			Namespace: constants.ACMNamespace,
 		},
 		Spec: policyv1.PolicySpec{
@@ -146,7 +153,7 @@ func (r *MeshReconciler) buildAndApplyPolicyForSM(smcp *maistrav2.ServiceMeshCon
 								Kind:       "ConfigurationPolicy",
 							},
 							ObjectMeta: metav1.ObjectMeta{
-								Name: smcp.GetName(),
+								Name: smcpEnforcePolicySuffix + smcp.GetName(),
 							},
 							Spec: configpolicyv1.ConfigurationPolicySpec{
 								Severity:          configpolicyv1.Severity("low"),
@@ -165,7 +172,7 @@ func (r *MeshReconciler) buildAndApplyPolicyForSM(smcp *maistrav2.ServiceMeshCon
 
 	smcpEnforcePlacementRule := &placementrulev1.PlacementRule{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      smcp.GetName(),
+			Name:      smcpEnforcePlacementRuleSuffix + smcp.GetName(),
 			Namespace: constants.ACMNamespace,
 		},
 		Spec: placementrulev1.PlacementRuleSpec{
@@ -187,21 +194,33 @@ func (r *MeshReconciler) buildAndApplyPolicyForSM(smcp *maistrav2.ServiceMeshCon
 
 	smcpEnforcePlacementBinding := &policyv1.PlacementBinding{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      smcp.GetName(),
+			Name:      smcpEnforcePlacementBindingSuffix + smcp.GetName(),
 			Namespace: constants.ACMNamespace,
 		},
 		PlacementRef: policyv1.PlacementSubject{
-			Name:     smcp.GetName(),
+			Name:     smcpEnforcePlacementRuleSuffix + smcp.GetName(),
 			Kind:     "PlacementRule",
 			APIGroup: placementrulev1.SchemeGroupVersion.Group,
 		},
 		Subjects: []policyv1.Subject{
 			policyv1.Subject{
-				Name:     smcp.GetName(),
+				Name:     smcpEnforcePolicySuffix + smcp.GetName(),
 				Kind:     policyv1.Kind,
 				APIGroup: policyv1.SchemeGroupVersion.Group,
 			},
 		},
+	}
+
+	if err := controllerutil.SetControllerReference(mesh, smcpEnforcePolicy, r.Scheme); err != nil {
+		log.Error(err, "failed to set controller reference", "name", smcpEnforcePolicy.GetName())
+	}
+
+	if err := controllerutil.SetControllerReference(mesh, smcpEnforcePlacementRule, r.Scheme); err != nil {
+		log.Error(err, "failed to set controller reference", "name", smcpEnforcePlacementRule.GetName())
+	}
+
+	if err := controllerutil.SetControllerReference(mesh, smcpEnforcePlacementBinding, r.Scheme); err != nil {
+		log.Error(err, "failed to set controller reference", "name", smcpEnforcePlacementBinding.GetName())
 	}
 
 	// create or update the placementRule

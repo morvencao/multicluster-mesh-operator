@@ -28,9 +28,16 @@ func TranslateToLogicMesh(smcpJson, smmrJson []byte, cluster string) (*meshv1alp
 	}
 
 	smmr := &maistrav1.ServiceMeshMemberRoll{}
-	err = json.Unmarshal(smmrJson, smmr)
-	if err != nil {
-		return nil, err
+	_ = json.Unmarshal(smmrJson, smmr)
+	//ignore smmr error because it may not created yet.
+	// err = json.Unmarshal(smmrJson, smmr)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	meshMember := []string{}
+	if smmr != nil {
+		meshMember = smmr.Spec.Members
 	}
 
 	trustDomain := "cluster.local"
@@ -38,7 +45,7 @@ func TranslateToLogicMesh(smcpJson, smmrJson []byte, cluster string) (*meshv1alp
 		trustDomain = smcp.Spec.Security.Trust.Domain
 	}
 
-	allComponents := make([]string, 2)
+	allComponents := make([]string, 0, 4)
 	for _, v := range smcp.Status.Readiness.Components {
 		if len(v) == 1 && v[0] == "" {
 			continue
@@ -61,7 +68,7 @@ func TranslateToLogicMesh(smcpJson, smmrJson []byte, cluster string) (*meshv1alp
 				Version:    smcp.Spec.Version,
 				Components: allComponents,
 			},
-			MeshMemberRoll: smmr.Spec.Members,
+			MeshMemberRoll: meshMember,
 			TrustDomain:    trustDomain,
 		},
 		Status: meshv1alpha1.MeshStatus{
