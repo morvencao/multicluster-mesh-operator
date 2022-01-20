@@ -18,9 +18,9 @@ TOKEN=$(cat ${SERVICEACCOUNT}/token)
 CACERT=${SERVICEACCOUNT}/ca.crt
 
 smcpDiscoveryPolicyNamespace="open-cluster-management"
-smcpDiscoveryPolicyName="policy-smcp-discovery"
-smcpDiscoveryPlacementRuleName="placement-policy-smcp-discovery"
-smcpDiscoveryPlacementBindingName="binding-policy-smcp-discovery"
+smcpDiscoveryPolicyName="sm-discovery"
+smcpDiscoveryPlacementRuleName="sm-discovery"
+smcpDiscoveryPlacementBindingName="sm-discovery"
 
 # Delete the smcp discovery policy, placementrule and placementbinding resources with TOKEN
 curl --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X DELETE ${APISERVER}/apis/policy.open-cluster-management.io/v1/namespaces/${smcpDiscoveryPolicyNamespace}/policies/${smcpDiscoveryPolicyName}

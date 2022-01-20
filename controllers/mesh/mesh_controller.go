@@ -27,10 +27,14 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
+	"reflect"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/builder"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
+	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/log"
+	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
 	meshv1alpha1 "github.com/morvencao/multicluster-mesh/apis/mesh/v1alpha1"
 	maistrav1 "maistra.io/api/core/v1"
@@ -44,9 +48,9 @@ import (
 )
 
 const (
-	smcpEnforcePolicySuffix           = "policy-smcp-enforce-"
-	smcpEnforcePlacementRuleSuffix    = "placement-policy-smcp-enforce-"
-	smcpEnforcePlacementBindingSuffix = "binding-policy-smcp-enforce-"
+	smcpEnforcePolicySuffix           = "sm-"
+	smcpEnforcePlacementRuleSuffix    = "sm-"
+	smcpEnforcePlacementBindingSuffix = "sm-"
 )
 
 // MeshReconciler reconciles a Mesh object
@@ -61,6 +65,7 @@ type MeshReconciler struct {
 
 func (r *MeshReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := log.FromContext(ctx)
+	log.Info("reconciling request with mesh controller", "request name", req.Name, "namespace", req.Namespace)
 
 	mesh := &meshv1alpha1.Mesh{}
 	err := r.Client.Get(context.TODO(), req.NamespacedName, mesh)
@@ -71,11 +76,6 @@ func (r *MeshReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 	// TODO(morvencao): handle mesh deletion
 	// the policy (with complianceType musthave) will not delete resources from managed clusters after deletion
-
-	if mesh.Spec.Existing == true {
-		// skip the existing mesh
-		return ctrl.Result{}, nil
-	}
 
 	if mesh.Spec.MeshProvider == "" {
 		mesh.Spec.MeshProvider = meshv1alpha1.MeshProviderOpenshift
@@ -97,8 +97,34 @@ func (r *MeshReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *MeshReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	meshPred := predicate.Funcs{
+		CreateFunc: func(e event.CreateEvent) bool {
+			isDiscoveriedMesh, ok := e.Object.GetLabels()[constants.LabelKeyForDiscoveriedMesh]
+			// skip create event for discoveried mesh
+			if ok && isDiscoveriedMesh == "true" {
+				return false
+			}
+			return true
+		},
+		UpdateFunc: func(e event.UpdateEvent) bool {
+			isDiscoveriedMesh, ok := e.ObjectNew.GetLabels()[constants.LabelKeyForDiscoveriedMesh]
+			// skip create event for discoveried mesh
+			if ok && isDiscoveriedMesh == "true" {
+				// for discoveried mesh, only requeue the change in Spec.FederationGateways
+				if !reflect.DeepEqual(e.ObjectNew.(*meshv1alpha1.Mesh).Spec.ControlPlane.FederationGateways, e.ObjectOld.(*meshv1alpha1.Mesh).Spec.ControlPlane.FederationGateways) {
+					return true
+				}
+				return false
+			}
+			return true
+		},
+		DeleteFunc: func(e event.DeleteEvent) bool {
+			return true
+		},
+	}
+
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&meshv1alpha1.Mesh{}).
+		For(&meshv1alpha1.Mesh{}, builder.WithPredicates(meshPred)).
 		Complete(r)
 }
 

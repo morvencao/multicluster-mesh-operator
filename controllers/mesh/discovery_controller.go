@@ -25,6 +25,7 @@ import (
 
 	"k8s.io/apimachinery/pkg/api/equality"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -66,6 +67,7 @@ type DiscoveryReconciler struct {
 
 func (r *DiscoveryReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := log.FromContext(ctx)
+	log.Info("reconciling request with discovery controller", "request name", req.Name, "namespace", req.Namespace)
 
 	policyInstance := &policyv1.Policy{}
 	err := r.Client.Get(context.TODO(), types.NamespacedName{
@@ -128,9 +130,36 @@ func (r *DiscoveryReconciler) discoveryMeshFromPolicyStatus(discoveryPolicy *pol
 	}
 	log.Info("get the cluster-SMCP", "clusterSmcpMap", clusterSmcpMap)
 
+	// list the user created mesh
+	labelSelector, err := labels.Parse(constants.LabelKeyForDiscoveriedMesh + "!=true")
+	if err != nil {
+		return err
+	}
+	opts := &client.ListOptions{
+		Namespace:     constants.ACMNamespace,
+		LabelSelector: labelSelector,
+	}
+	userCreateMeshList := &meshv1alpha1.MeshList{}
+	err = r.Client.List(context.TODO(), userCreateMeshList, opts)
+	if err != nil {
+		log.Error(err, "failed to list mesh resource")
+		return err
+	}
+
 	for clusterName, smcpLists := range clusterSmcpMap {
 		for _, smcpNamespacedName := range smcpLists {
 			namespacedName := strings.Split(smcpNamespacedName, "/")
+			isUserCreatedMesh := false
+			for _, userCreatedMesh := range userCreateMeshList.Items {
+				// skip user created mesh for discovery
+				if clusterName == userCreatedMesh.Spec.Cluster && userCreatedMesh.GetName() == namespacedName[0] && userCreatedMesh.Spec.ControlPlane.Namespace == namespacedName[1] {
+					isUserCreatedMesh = true
+					break
+				}
+			}
+			if isUserCreatedMesh {
+				continue
+			}
 			smcpJson, err := graphql.QueryK8sResource("maistra.io/v2", "ServiceMeshControlPlane", namespacedName[0], namespacedName[1], clusterName)
 			if err != nil {
 				log.Error(err, "failed to get the SMCP from graphql", "name", namespacedName[0], "namespace", namespacedName[1], "cluster", clusterName)

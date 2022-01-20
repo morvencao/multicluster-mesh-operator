@@ -24,7 +24,6 @@ import (
 // MeshSpec defines the desired state of physical service mesh in a managed cluster
 type MeshSpec struct {
 	MeshProvider   MeshProvider      `json:"meshProvider,omitempty"`
-	Existing       bool              `json:"existing,omitempty"`
 	Cluster        string            `json:"cluster,omitempty"`
 	ControlPlane   *MeshControlPlane `json:"controlPlane,omitempty"`
 	MeshMemberRoll []string          `json:"meshMemberRoll,omitempty"`
@@ -41,10 +40,17 @@ const (
 
 // MeshControlPlane defines the mesh control plane
 type MeshControlPlane struct {
-	Namespace  string   `json:"namespace,omitempty"`
-	Version    string   `json:"version,omitempty"`
-	Profiles   []string `json:"profiles,omitempty"`
-	Components []string `json:"components,omitempty"`
+	Namespace          string              `json:"namespace,omitempty"`
+	Version            string              `json:"version,omitempty"`
+	Profiles           []string            `json:"profiles,omitempty"`
+	Components         []string            `json:"components,omitempty"`
+	FederationGateways []FederationGateway `json:"federationGateways,omitempty"`
+}
+
+// FederationGateway defines the ingressgateway and egressgateways used for mesh federation
+type FederationGateway struct {
+	MeshPeer string `json:"meshPeer,omitempty"`
+	// additional setting for federation gateway...
 }
 
 // MeshStatus defines the observed state of Mesh

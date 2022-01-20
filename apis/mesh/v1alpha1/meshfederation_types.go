@@ -22,13 +22,14 @@ import (
 
 // MeshFederationSpec defines the desired state of MeshFederation of a central view
 type MeshFederationSpec struct {
-	MeshPeer    MeshPeer    `json:",inline"`
-	TrustConfig TrustConfig `json:"trustConfig,omitempty"`
+	MeshPeers   []MeshPeer   `json:"meshPeers,omitempty"`
+	TrustConfig *TrustConfig `json:"trustConfig,omitempty"`
 }
 
 // MeshPeer defines mesh peers
 type MeshPeer struct {
 	Peers []string `json:"peers,omitempty"`
+	// additional setting for peers...
 }
 
 type TrustType string

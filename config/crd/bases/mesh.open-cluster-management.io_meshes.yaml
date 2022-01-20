@@ -46,6 +46,15 @@ spec:
                     items:
                       type: string
                     type: array
+                  federationGateways:
+                    items:
+                      description: FederationGateway defines the ingressgateway and
+                        egressgateways used for mesh federation
+                      properties:
+                        meshPeer:
+                          type: string
+                      type: object
+                    type: array
                   namespace:
                     type: string
                   profiles:
@@ -55,8 +64,6 @@ spec:
                   version:
                     type: string
                 type: object
-              existing:
-                type: boolean
               meshMemberRoll:
                 items:
                   type: string

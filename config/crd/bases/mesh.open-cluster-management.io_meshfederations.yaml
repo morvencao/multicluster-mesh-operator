@@ -37,9 +37,15 @@ spec:
             description: MeshFederationSpec defines the desired state of MeshFederation
               of a central view
             properties:
-              peers:
+              meshPeers:
                 items:
-                  type: string
+                  description: MeshPeer defines mesh peers
+                  properties:
+                    peers:
+                      items:
+                        type: string
+                      type: array
+                  type: object
                 type: array
               trustConfig:
                 description: TrustConfig defines the trust configuratin for mesh peers

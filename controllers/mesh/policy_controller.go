@@ -35,9 +35,9 @@ import (
 )
 
 const (
-	smcpDiscoveryPolicyName           = "policy-smcp-discovery"
-	smcpDiscoveryPlacementRuleName    = "placement-policy-smcp-discovery"
-	smcpDiscoveryPlacementBindingName = "binding-policy-smcp-discovery"
+	smcpDiscoveryPolicyName           = "sm-discovery"
+	smcpDiscoveryPlacementRuleName    = "sm-discovery"
+	smcpDiscoveryPlacementBindingName = "sm-discovery"
 )
 
 var (
