@@ -26,6 +26,7 @@ import (
 type MeshV1alpha1Interface interface {
 	RESTClient() rest.Interface
 	MeshesGetter
+	MeshFederationsGetter
 }
 
 // MeshV1alpha1Client is used to interact with features provided by the mesh.open-cluster-management.io group.
@@ -35,6 +36,10 @@ type MeshV1alpha1Client struct {
 
 func (c *MeshV1alpha1Client) Meshes(namespace string) MeshInterface {
 	return newMeshes(c, namespace)
+}
+
+func (c *MeshV1alpha1Client) MeshFederations(namespace string) MeshFederationInterface {
+	return newMeshFederations(c, namespace)
 }
 
 // NewForConfig creates a new MeshV1alpha1Client for the given config.

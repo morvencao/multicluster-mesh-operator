@@ -1,6 +1,6 @@
-//+kubebuilder:rbac:groups=mesh.open-cluster-management.io,resources=globalmeshes,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=mesh.open-cluster-management.io,resources=globalmeshes/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=mesh.open-cluster-management.io,resources=globalmeshes/finalizers,verbs=update
+//+kubebuilder:rbac:groups=mesh.open-cluster-management.io,resources=meshfederations,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=mesh.open-cluster-management.io,resources=meshfederations/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=mesh.open-cluster-management.io,resources=meshfederations/finalizers,verbs=update
 
 //+kubebuilder:rbac:groups=mesh.open-cluster-management.io,resources=meshes,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=mesh.open-cluster-management.io,resources=meshes/status,verbs=get;update;patch

@@ -1,6 +1,6 @@
 apiVersion: mesh.open-cluster-management.io/v1alpha1
-kind: GlobalMesh
+kind: MeshFederation
 metadata:
-  name: globalmesh-sample
+  name: meshfederation-sample
 spec:
   # TODO(user): Add fields here

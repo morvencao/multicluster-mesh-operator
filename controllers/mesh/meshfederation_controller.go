@@ -27,23 +27,23 @@ import (
 	meshv1alpha1 "github.com/morvencao/multicluster-mesh/apis/mesh/v1alpha1"
 )
 
-// GlobalMeshReconciler reconciles a GlobalMesh object
-type GlobalMeshReconciler struct {
+// MeshFederationReconciler reconciles a MeshFederation object
+type MeshFederationReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
 }
 
-//+kubebuilder:rbac:groups=mesh.open-cluster-management.io,resources=globalmeshes,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=mesh.open-cluster-management.io,resources=globalmeshes/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=mesh.open-cluster-management.io,resources=globalmeshes/finalizers,verbs=update
+//+kubebuilder:rbac:groups=mesh.open-cluster-management.io,resources=meshfederations,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=mesh.open-cluster-management.io,resources=meshfederations/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=mesh.open-cluster-management.io,resources=meshfederations/finalizers,verbs=update
 
-func (r *GlobalMeshReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+func (r *MeshFederationReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := log.FromContext(ctx)
 
-	globalMesh := &meshv1alpha1.GlobalMesh{}
-	err := r.Client.Get(context.TODO(), req.NamespacedName, globalMesh)
+	meshFederation := &meshv1alpha1.MeshFederation{}
+	err := r.Client.Get(context.TODO(), req.NamespacedName, meshFederation)
 	if err != nil {
-		log.Error(err, "unable to fetch GlobalMesh")
+		log.Error(err, "unable to fetch MeshFederation")
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
@@ -51,8 +51,8 @@ func (r *GlobalMeshReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 }
 
 // SetupWithManager sets up the controller with the Manager.
-func (r *GlobalMeshReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *MeshFederationReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&meshv1alpha1.GlobalMesh{}).
+		For(&meshv1alpha1.MeshFederation{}).
 		Complete(r)
 }

@@ -95,11 +95,11 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "Mesh")
 		os.Exit(1)
 	}
-	if err = (&meshcontrollers.GlobalMeshReconciler{
+	if err = (&meshcontrollers.MeshFederationReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "GlobalMesh")
+		setupLog.Error(err, "unable to create controller", "controller", "MeshFederation")
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder

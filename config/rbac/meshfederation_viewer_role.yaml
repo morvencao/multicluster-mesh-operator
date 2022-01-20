@@ -1,13 +1,13 @@
-# permissions for end users to view globalmeshes.
+# permissions for end users to view meshfederations.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: globalmesh-viewer-role
+  name: meshfederation-viewer-role
 rules:
 - apiGroups:
   - mesh.open-cluster-management.io
   resources:
-  - globalmeshes
+  - meshfederations
   verbs:
   - get
   - list
@@ -15,6 +15,6 @@ rules:
 - apiGroups:
   - mesh.open-cluster-management.io
   resources:
-  - globalmeshes/status
+  - meshfederations/status
   verbs:
   - get

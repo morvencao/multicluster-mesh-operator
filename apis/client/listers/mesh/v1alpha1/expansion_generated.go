@@ -24,3 +24,11 @@ type MeshListerExpansion interface{}
 // MeshNamespaceListerExpansion allows custom methods to be added to
 // MeshNamespaceLister.
 type MeshNamespaceListerExpansion interface{}
+
+// MeshFederationListerExpansion allows custom methods to be added to
+// MeshFederationLister.
+type MeshFederationListerExpansion interface{}
+
+// MeshFederationNamespaceListerExpansion allows custom methods to be added to
+// MeshFederationNamespaceLister.
+type MeshFederationNamespaceListerExpansion interface{}

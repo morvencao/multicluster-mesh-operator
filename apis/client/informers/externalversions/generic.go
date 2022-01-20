@@ -54,6 +54,8 @@ func (f *sharedInformerFactory) ForResource(resource schema.GroupVersionResource
 	// Group=mesh.open-cluster-management.io, Version=v1alpha1
 	case v1alpha1.SchemeGroupVersion.WithResource("meshes"):
 		return &genericInformer{resource: resource.GroupResource(), informer: f.Mesh().V1alpha1().Meshes().Informer()}, nil
+	case v1alpha1.SchemeGroupVersion.WithResource("meshfederations"):
+		return &genericInformer{resource: resource.GroupResource(), informer: f.Mesh().V1alpha1().MeshFederations().Informer()}, nil
 
 	}
 

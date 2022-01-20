@@ -31,6 +31,10 @@ func (c *FakeMeshV1alpha1) Meshes(namespace string) v1alpha1.MeshInterface {
 	return &FakeMeshes{c, namespace}
 }
 
+func (c *FakeMeshV1alpha1) MeshFederations(namespace string) v1alpha1.MeshFederationInterface {
+	return &FakeMeshFederations{c, namespace}
+}
+
 // RESTClient returns a RESTClient that is used to communicate
 // with API server by this client implementation.
 func (c *FakeMeshV1alpha1) RESTClient() rest.Interface {
