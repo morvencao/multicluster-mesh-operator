@@ -60,8 +60,9 @@ func TranslateToLogicMesh(smcpJson, smmrJson []byte, cluster string) (*meshv1alp
 			Namespace: constants.ACMNamespace,
 		},
 		Spec: meshv1alpha1.MeshSpec{
-			Existing: true,
-			Cluster:  cluster,
+			MeshProvider: meshv1alpha1.MeshProviderOpenshift,
+			Existing:     true,
+			Cluster:      cluster,
 			ControlPlane: &meshv1alpha1.MeshControlPlane{
 				Namespace:  smcp.GetNamespace(),
 				Profiles:   smcp.Spec.Profiles,

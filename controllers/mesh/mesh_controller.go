@@ -69,9 +69,16 @@ func (r *MeshReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
+	// TODO(morvencao): handle mesh deletion
+	// the policy (with complianceType musthave) will not delete resources from managed clusters after deletion
+
 	if mesh.Spec.Existing == true {
 		// skip the existing mesh
 		return ctrl.Result{}, nil
+	}
+
+	if mesh.Spec.MeshProvider == "" {
+		mesh.Spec.MeshProvider = meshv1alpha1.MeshProviderOpenshift
 	}
 
 	smcp, smmr, cluster, err := translate.TranslateToPhysicalMesh(mesh)

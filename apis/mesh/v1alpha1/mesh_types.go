@@ -23,12 +23,21 @@ import (
 
 // MeshSpec defines the desired state of physical service mesh in a managed cluster
 type MeshSpec struct {
+	MeshProvider   MeshProvider      `json:"meshProvider,omitempty"`
 	Existing       bool              `json:"existing,omitempty"`
 	Cluster        string            `json:"cluster,omitempty"`
 	ControlPlane   *MeshControlPlane `json:"controlPlane,omitempty"`
 	MeshMemberRoll []string          `json:"meshMemberRoll,omitempty"`
 	TrustDomain    string            `json:"trustDomain,omitempty"`
 }
+
+type MeshProvider string
+
+const (
+	MeshProviderOpenshift      MeshProvider = "Openshift Service Mesh"
+	MeshProviderCommunityIstio MeshProvider = "Community Istio"
+	// more providers come later
+)
 
 // MeshControlPlane defines the mesh control plane
 type MeshControlPlane struct {

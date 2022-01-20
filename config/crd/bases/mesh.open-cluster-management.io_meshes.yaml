@@ -61,6 +61,8 @@ spec:
                 items:
                   type: string
                 type: array
+              meshProvider:
+                type: string
               trustDomain:
                 type: string
             type: object
