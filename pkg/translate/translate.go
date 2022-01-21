@@ -102,7 +102,7 @@ func TranslateToPhysicalMesh(mesh *meshv1alpha1.Mesh) (*maistrav2.ServiceMeshCon
 		smcpName = strings.Replace(smcpName, mesh.Spec.Cluster+"-"+mesh.Spec.ControlPlane.Namespace+"-", "", 1)
 	}
 	namespace := mesh.Spec.ControlPlane.Namespace
-	version := "v2.0"
+	version := "v2.1" // mesh federation is support by OSSM >= v2.1
 	if mesh.Spec.ControlPlane.Version != "" {
 		version = mesh.Spec.ControlPlane.Version
 	}

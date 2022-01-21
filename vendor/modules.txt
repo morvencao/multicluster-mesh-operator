@@ -582,6 +582,7 @@ k8s.io/utils/trace
 ## explicit
 maistra.io/api/core/v1
 maistra.io/api/core/v2
+maistra.io/api/federation/v1
 # open-cluster-management.io/config-policy-controller v0.5.1-0.20211220212124-e08b41e77b46
 ## explicit
 open-cluster-management.io/config-policy-controller/api/v1
