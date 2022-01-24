@@ -19,4 +19,6 @@ package v1alpha1
 
 type MeshExpansion interface{}
 
+type MeshDeploymentExpansion interface{}
+
 type MeshFederationExpansion interface{}

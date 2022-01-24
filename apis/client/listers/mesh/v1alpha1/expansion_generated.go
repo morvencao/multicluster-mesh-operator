@@ -25,6 +25,14 @@ type MeshListerExpansion interface{}
 // MeshNamespaceLister.
 type MeshNamespaceListerExpansion interface{}
 
+// MeshDeploymentListerExpansion allows custom methods to be added to
+// MeshDeploymentLister.
+type MeshDeploymentListerExpansion interface{}
+
+// MeshDeploymentNamespaceListerExpansion allows custom methods to be added to
+// MeshDeploymentNamespaceLister.
+type MeshDeploymentNamespaceListerExpansion interface{}
+
 // MeshFederationListerExpansion allows custom methods to be added to
 // MeshFederationLister.
 type MeshFederationListerExpansion interface{}

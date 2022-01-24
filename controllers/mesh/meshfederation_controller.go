@@ -98,7 +98,7 @@ func (r *MeshFederationReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	}
 
 	if meshUpdated {
-		return ctrl.Result{RequeueAfter: 15 * time.Second}, nil
+		return ctrl.Result{RequeueAfter: 5 * time.Second}, nil
 	}
 
 	// create ServiceMeshPeer anc Configmap for CA

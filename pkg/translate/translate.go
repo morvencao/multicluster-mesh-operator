@@ -281,7 +281,7 @@ func TranslateToPhysicalMesh(mesh *meshv1alpha1.Mesh) (*maistrav2.ServiceMeshCon
 							},
 						},
 						ServiceSpec: corev1.ServiceSpec{
-							Type: corev1.ServiceTypeLoadBalancer,
+							Type: corev1.ServiceTypeClusterIP,
 							Ports: []corev1.ServicePort{
 								corev1.ServicePort{
 									Name:       "tls",
@@ -289,7 +289,7 @@ func TranslateToPhysicalMesh(mesh *meshv1alpha1.Mesh) (*maistrav2.ServiceMeshCon
 									TargetPort: intstr.FromInt(15443),
 								},
 								corev1.ServicePort{
-									Name:       "https-discovery",
+									Name:       "http-discovery",
 									Port:       8188,
 									TargetPort: intstr.FromInt(8188),
 								},

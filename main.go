@@ -31,10 +31,11 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	meshv1alpha1 "github.com/morvencao/multicluster-mesh/apis/mesh/v1alpha1"
-	meshcontrollers "github.com/morvencao/multicluster-mesh/controllers/mesh"
 	policyv1 "open-cluster-management.io/governance-policy-propagator/api/v1"
 	placementrulev1 "open-cluster-management.io/multicloud-operators-subscription/pkg/apis/apps/placementrule/v1"
+
+	meshv1alpha1 "github.com/morvencao/multicluster-mesh/apis/mesh/v1alpha1"
+	meshcontrollers "github.com/morvencao/multicluster-mesh/controllers/mesh"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -100,6 +101,13 @@ func main() {
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "MeshFederation")
+		os.Exit(1)
+	}
+	if err = (&meshcontrollers.MeshDeploymentReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "MeshDeployment")
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder

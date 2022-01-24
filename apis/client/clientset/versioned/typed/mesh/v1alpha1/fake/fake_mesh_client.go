@@ -31,6 +31,10 @@ func (c *FakeMeshV1alpha1) Meshes(namespace string) v1alpha1.MeshInterface {
 	return &FakeMeshes{c, namespace}
 }
 
+func (c *FakeMeshV1alpha1) MeshDeployments(namespace string) v1alpha1.MeshDeploymentInterface {
+	return &FakeMeshDeployments{c, namespace}
+}
+
 func (c *FakeMeshV1alpha1) MeshFederations(namespace string) v1alpha1.MeshFederationInterface {
 	return &FakeMeshFederations{c, namespace}
 }

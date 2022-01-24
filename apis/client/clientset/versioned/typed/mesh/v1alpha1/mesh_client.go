@@ -26,6 +26,7 @@ import (
 type MeshV1alpha1Interface interface {
 	RESTClient() rest.Interface
 	MeshesGetter
+	MeshDeploymentsGetter
 	MeshFederationsGetter
 }
 
@@ -36,6 +37,10 @@ type MeshV1alpha1Client struct {
 
 func (c *MeshV1alpha1Client) Meshes(namespace string) MeshInterface {
 	return newMeshes(c, namespace)
+}
+
+func (c *MeshV1alpha1Client) MeshDeployments(namespace string) MeshDeploymentInterface {
+	return newMeshDeployments(c, namespace)
 }
 
 func (c *MeshV1alpha1Client) MeshFederations(namespace string) MeshFederationInterface {
