@@ -61,6 +61,10 @@ type MeshStatus struct {
 // +genclient
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:printcolumn:name="CLUSTER",type="string",JSONPath=".spec.cluster",description="Cluster of the mesh"
+//+kubebuilder:printcolumn:name="VERSION",type="string",JSONPath=".spec.controlPlane.version",description="Version of the mesh"
+//+kubebuilder:printcolumn:name="PEERS",type="string",JSONPath=".spec.controlPlane.federationGateways[*].meshPeer"
+//+kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
 
 // Mesh is the Schema for the meshes API
 type Mesh struct {

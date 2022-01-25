@@ -16,7 +16,22 @@ spec:
     singular: mesh
   scope: Namespaced
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - description: Cluster of the mesh
+      jsonPath: .spec.cluster
+      name: CLUSTER
+      type: string
+    - description: Version of the mesh
+      jsonPath: .spec.controlPlane.version
+      name: VERSION
+      type: string
+    - jsonPath: .spec.controlPlane.federationGateways[*].meshPeer
+      name: PEERS
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: AGE
+      type: date
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         description: Mesh is the Schema for the meshes API

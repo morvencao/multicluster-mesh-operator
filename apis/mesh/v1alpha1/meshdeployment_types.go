@@ -36,6 +36,9 @@ type MeshDeploymentStatus struct {
 // +genclient
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:printcolumn:name="CLUSTERS",type="string",JSONPath=".spec.clusters",description="Target clusters of the mesh deployment"
+//+kubebuilder:printcolumn:name="VERSION",type="string",JSONPath=".spec.controlPlane.version",description="Version of the mesh"
+//+kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
 
 // MeshDeployment is the Schema for the meshdeployments API
 type MeshDeployment struct {

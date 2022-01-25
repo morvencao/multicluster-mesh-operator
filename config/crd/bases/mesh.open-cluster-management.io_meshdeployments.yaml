@@ -16,7 +16,19 @@ spec:
     singular: meshdeployment
   scope: Namespaced
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - description: Target clusters of the mesh deployment
+      jsonPath: .spec.clusters
+      name: CLUSTERS
+      type: string
+    - description: Version of the mesh
+      jsonPath: .spec.controlPlane.version
+      name: VERSION
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: AGE
+      type: date
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         description: MeshDeployment is the Schema for the meshdeployments API
