@@ -69,7 +69,7 @@ func (r *MeshDeploymentReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 
 		mesh := &meshv1alpha1.Mesh{
 			ObjectMeta: metav1.ObjectMeta{
-				Name:      fmt.Sprintf("%s-%s-%s", c, meshDeploy.Spec.ControlPlane.Namespace, meshDeploy.GetName()),
+				Name:      fmt.Sprintf("%s-%s", c, meshDeploy.GetName()),
 				Namespace: constants.ACMNamespace,
 			},
 			Spec: meshv1alpha1.MeshSpec{
