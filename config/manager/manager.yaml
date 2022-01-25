@@ -1,38 +1,32 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  labels:
-    control-plane: controller-manager
-  name: system
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: controller-manager
-  namespace: system
+  name: multicluster-mesh
+  namespace: open-cluster-management
   labels:
-    control-plane: controller-manager
+    app: multicluster-mesh
 spec:
   selector:
     matchLabels:
-      control-plane: controller-manager
+      app: multicluster-mesh
   replicas: 1
   template:
     metadata:
       annotations:
-        kubectl.kubernetes.io/default-container: manager
+        kubectl.kubernetes.io/default-container: multicluster-mesh
       labels:
-        control-plane: controller-manager
+        app: multicluster-mesh
     spec:
       securityContext:
         runAsNonRoot: true
       containers:
       - command:
-        - /manager
+        - /multicluster-mesh
         args:
         - --leader-elect
-        image: controller:latest
-        name: manager
+        image: quay.io/morvencao/multicluster-mesh:latest
+        name: multicluster-mesh
         securityContext:
           allowPrivilegeEscalation: false
         livenessProbe:
@@ -47,8 +41,13 @@ spec:
             port: 8081
           initialDelaySeconds: 5
           periodSeconds: 10
-        # TODO(user): Configure the resources accordingly based on the project requirements.
-        # More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - /usr/local/bin/prestop.sh
         resources:
           limits:
             cpu: 500m
@@ -56,5 +55,5 @@ spec:
           requests:
             cpu: 10m
             memory: 64Mi
-      serviceAccountName: controller-manager
+      serviceAccountName: multicluster-mesh
       terminationGracePeriodSeconds: 10

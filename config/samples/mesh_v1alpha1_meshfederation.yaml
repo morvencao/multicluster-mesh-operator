@@ -3,4 +3,9 @@ kind: MeshFederation
 metadata:
   name: meshfederation-sample
 spec:
-  # TODO(user): Add fields here
+  meshPeers:
+  - peers:
+    - managedcluster1-mesh
+    - managedcluster1-mesh
+  trustConfig:
+    trustType: Limited

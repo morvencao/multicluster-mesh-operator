@@ -1,4 +1,4 @@
-# Build the manager binary
+# Build the multicluster-mesh binary
 FROM golang:1.16 as builder
 
 WORKDIR /workspace
@@ -16,12 +16,12 @@ COPY controllers/ controllers/
 COPY pkg/ pkg/
 
 # Build
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o manager main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o multicluster-mesh main.go
 
 FROM registry.access.redhat.com/ubi8/ubi-minimal:latest
 WORKDIR /
-COPY --from=builder /workspace/manager .
+COPY --from=builder /workspace/multicluster-mesh .
 COPY ./prestop.sh /usr/local/bin/prestop.sh
 USER 65532:65532
 
-ENTRYPOINT ["/manager"]
+ENTRYPOINT ["/multicluster-mesh"]

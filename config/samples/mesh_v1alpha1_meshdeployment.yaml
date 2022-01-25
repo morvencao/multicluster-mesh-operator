@@ -3,4 +3,24 @@ kind: MeshDeployment
 metadata:
   name: meshdeployment-sample
 spec:
-  # TODO(user): Add fields here
+  clusters:
+  - managedcluster1
+  - managedcluster2
+  controlPlane:
+    components:
+    - grafana
+    - istio-discovery
+    - istio-egress
+    - istio-ingress
+    - kiali
+    - mesh-config
+    - telemetry-common
+    - tracing
+    namespace: mesh-system
+    profiles:
+    - default
+    version: v2.1
+  meshMemberRoll:
+  - mesh-apps
+  meshProvider: Openshift Service Mesh
+  trustDomain: mesh.local

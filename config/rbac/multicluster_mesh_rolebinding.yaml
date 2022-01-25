@@ -1,11 +1,13 @@
+# give cluster-admin role
+# TODO(morvencao): reduce the permission to multicluster-mesh
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: multicluster-mesh-rolebinding
+  name: multicluster-mesh
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: multicluster-mesh-role
+  name: cluster-admin
 subjects:
 - kind: ServiceAccount
   name: multicluster-mesh
