@@ -19,6 +19,7 @@ package mesh
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"k8s.io/apimachinery/pkg/api/equality"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -56,10 +57,19 @@ func (r *MeshDeploymentReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
-	for _, c := range meshDeploy.Spec.Clusters {
+	for i, c := range meshDeploy.Spec.Clusters {
+		trustDomain := "cluster.local" // default trust domain
+		if meshDeploy.Spec.TrustDomain != "" {
+			trustDomain = meshDeploy.Spec.TrustDomain
+		}
+		trustDomainSplit := strings.Split(trustDomain, ".")
+		// workaround for trust domain issue in mesh federation
+		trustDomainSplit[0] = fmt.Sprintf("%s%d", trustDomainSplit[0], i+1)
+		trustDomain = strings.Join(trustDomainSplit, ".")
+
 		mesh := &meshv1alpha1.Mesh{
 			ObjectMeta: metav1.ObjectMeta{
-				Name:      fmt.Sprintf("%s-%s", c, meshDeploy.GetName()),
+				Name:      fmt.Sprintf("%s-%s-%s", c, meshDeploy.Spec.ControlPlane.Namespace, meshDeploy.GetName()),
 				Namespace: constants.ACMNamespace,
 			},
 			Spec: meshv1alpha1.MeshSpec{
@@ -67,7 +77,7 @@ func (r *MeshDeploymentReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 				Cluster:        c,
 				ControlPlane:   meshDeploy.Spec.ControlPlane,
 				MeshMemberRoll: meshDeploy.Spec.MeshMemberRoll,
-				TrustDomain:    meshDeploy.Spec.TrustDomain,
+				TrustDomain:    trustDomain,
 			},
 		}
 

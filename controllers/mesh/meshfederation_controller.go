@@ -20,6 +20,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	corev1 "k8s.io/api/core/v1"
@@ -374,11 +375,18 @@ func (r *MeshFederationReconciler) connectMeshPeers(meshFederation *meshv1alpha1
 		},
 	}
 
+	truncatedMesh1Name := strings.Replace(mesh1.GetName(), mesh1.Spec.Cluster+"-"+mesh1.Spec.ControlPlane.Namespace+"-", "", 1)
+	truncatedMesh2Name := strings.Replace(mesh2.GetName(), mesh2.Spec.Cluster+"-"+mesh2.Spec.ControlPlane.Namespace+"-", "", 1)
+
 	// build enforce policy for mesh1 to mesh2
 	mesh1ToMesh2EnforcePolicy := &policyv1.Policy{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      mesh1.GetName() + "-" + mesh2.GetName(),
+			Name:      smcpEnforcePolicySuffix + truncatedMesh1Name + "-" + truncatedMesh2Name,
 			Namespace: constants.ACMNamespace,
+			Annotations: map[string]string{
+				"mesh.open-cluster-management.io/mesh-from": mesh1.GetName(),
+				"mesh.open-cluster-management.io/mesh-to":   mesh2.GetName(),
+			},
 		},
 		Spec: policyv1.PolicySpec{
 			Disabled:          false,
@@ -424,8 +432,12 @@ func (r *MeshFederationReconciler) connectMeshPeers(meshFederation *meshv1alpha1
 
 	mesh1ToMesh2EnforcePlacementRule := &placementrulev1.PlacementRule{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      mesh1.GetName() + "-" + mesh2.GetName(),
+			Name:      smcpEnforcePlacementRuleSuffix + truncatedMesh1Name + "-" + truncatedMesh2Name,
 			Namespace: constants.ACMNamespace,
+			Annotations: map[string]string{
+				"mesh.open-cluster-management.io/mesh-from": mesh1.GetName(),
+				"mesh.open-cluster-management.io/mesh-to":   mesh2.GetName(),
+			},
 		},
 		Spec: placementrulev1.PlacementRuleSpec{
 			ClusterConditions: []placementrulev1.ClusterConditionFilter{
@@ -446,17 +458,21 @@ func (r *MeshFederationReconciler) connectMeshPeers(meshFederation *meshv1alpha1
 
 	mesh1ToMesh2EnforcePlacementBinding := &policyv1.PlacementBinding{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      mesh1.GetName() + "-" + mesh2.GetName(),
+			Name:      smcpEnforcePlacementBindingSuffix + truncatedMesh1Name + "-" + truncatedMesh2Name,
 			Namespace: constants.ACMNamespace,
+			Annotations: map[string]string{
+				"mesh.open-cluster-management.io/mesh-from": mesh1.GetName(),
+				"mesh.open-cluster-management.io/mesh-to":   mesh2.GetName(),
+			},
 		},
 		PlacementRef: policyv1.PlacementSubject{
-			Name:     mesh1.GetName() + "-" + mesh2.GetName(),
+			Name:     smcpEnforcePlacementRuleSuffix + truncatedMesh1Name + "-" + truncatedMesh2Name,
 			Kind:     "PlacementRule",
 			APIGroup: placementrulev1.SchemeGroupVersion.Group,
 		},
 		Subjects: []policyv1.Subject{
 			policyv1.Subject{
-				Name:     mesh1.GetName() + "-" + mesh2.GetName(),
+				Name:     smcpEnforcePolicySuffix + truncatedMesh1Name + "-" + truncatedMesh2Name,
 				Kind:     policyv1.Kind,
 				APIGroup: policyv1.SchemeGroupVersion.Group,
 			},
@@ -598,8 +614,12 @@ func (r *MeshFederationReconciler) connectMeshPeers(meshFederation *meshv1alpha1
 	// build enforce policy for mesh2 to mesh1
 	mesh2ToMesh1EnforcePolicy := &policyv1.Policy{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      mesh2.GetName() + "-" + mesh1.GetName(),
+			Name:      smcpEnforcePolicySuffix + truncatedMesh2Name + "-" + truncatedMesh1Name,
 			Namespace: constants.ACMNamespace,
+			Annotations: map[string]string{
+				"mesh.open-cluster-management.io/mesh-from": mesh2.GetName(),
+				"mesh.open-cluster-management.io/mesh-to":   mesh1.GetName(),
+			},
 		},
 		Spec: policyv1.PolicySpec{
 			Disabled:          false,
@@ -645,8 +665,12 @@ func (r *MeshFederationReconciler) connectMeshPeers(meshFederation *meshv1alpha1
 
 	mesh2ToMesh1EnforcePlacementRule := &placementrulev1.PlacementRule{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      mesh2.GetName() + "-" + mesh1.GetName(),
+			Name:      smcpEnforcePlacementRuleSuffix + truncatedMesh2Name + "-" + truncatedMesh1Name,
 			Namespace: constants.ACMNamespace,
+			Annotations: map[string]string{
+				"mesh.open-cluster-management.io/mesh-from": mesh2.GetName(),
+				"mesh.open-cluster-management.io/mesh-to":   mesh1.GetName(),
+			},
 		},
 		Spec: placementrulev1.PlacementRuleSpec{
 			ClusterConditions: []placementrulev1.ClusterConditionFilter{
@@ -667,17 +691,21 @@ func (r *MeshFederationReconciler) connectMeshPeers(meshFederation *meshv1alpha1
 
 	mesh2ToMesh1EnforcePlacementBinding := &policyv1.PlacementBinding{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      mesh2.GetName() + "-" + mesh1.GetName(),
+			Name:      smcpEnforcePlacementBindingSuffix + truncatedMesh2Name + "-" + truncatedMesh1Name,
 			Namespace: constants.ACMNamespace,
+			Annotations: map[string]string{
+				"mesh.open-cluster-management.io/mesh-from": mesh2.GetName(),
+				"mesh.open-cluster-management.io/mesh-to":   mesh1.GetName(),
+			},
 		},
 		PlacementRef: policyv1.PlacementSubject{
-			Name:     mesh2.GetName() + "-" + mesh1.GetName(),
+			Name:     smcpEnforcePlacementRuleSuffix + truncatedMesh2Name + "-" + truncatedMesh1Name,
 			Kind:     "PlacementRule",
 			APIGroup: placementrulev1.SchemeGroupVersion.Group,
 		},
 		Subjects: []policyv1.Subject{
 			policyv1.Subject{
-				Name:     mesh2.GetName() + "-" + mesh1.GetName(),
+				Name:     smcpEnforcePolicySuffix + truncatedMesh2Name + "-" + truncatedMesh1Name,
 				Kind:     policyv1.Kind,
 				APIGroup: policyv1.SchemeGroupVersion.Group,
 			},

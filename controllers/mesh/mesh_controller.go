@@ -48,9 +48,9 @@ import (
 )
 
 const (
-	smcpEnforcePolicySuffix           = "sm-"
-	smcpEnforcePlacementRuleSuffix    = "sm-"
-	smcpEnforcePlacementBindingSuffix = "sm-"
+	smcpEnforcePolicySuffix           = "sm-enf-"
+	smcpEnforcePlacementRuleSuffix    = "sm-enf-"
+	smcpEnforcePlacementBindingSuffix = "sm-enf-"
 )
 
 // MeshReconciler reconciles a Mesh object
