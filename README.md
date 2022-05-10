@@ -1,5 +1,7 @@
 # Multicluster Mesh
 
+> Notice: This repo is deprecated, if you want to have a try of the multicluster service mesh on the [Open-Cluster-Management](https://open-cluster-management.io/), please refer to https://github.com/open-cluster-management-io/multicluster-mesh
+
 multicluster-mesh-operator is an enhanced service mesh operator applied in [Red Hat Advanced Cluster Management for Kubernetes](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/). It is used to manages service meshes across multiple managed clusters and hybrid cloud providers.
 
 ## Core Concepts
