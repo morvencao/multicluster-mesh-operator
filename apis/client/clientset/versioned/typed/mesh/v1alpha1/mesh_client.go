@@ -18,8 +18,8 @@ limitations under the License.
 package v1alpha1
 
 import (
-	"github.com/morvencao/multicluster-mesh/apis/client/clientset/versioned/scheme"
-	v1alpha1 "github.com/morvencao/multicluster-mesh/apis/mesh/v1alpha1"
+	"github.com/morvencao/multicluster-mesh-operator/apis/client/clientset/versioned/scheme"
+	v1alpha1 "github.com/morvencao/multicluster-mesh-operator/apis/mesh/v1alpha1"
 	rest "k8s.io/client-go/rest"
 )
 

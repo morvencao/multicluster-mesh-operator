@@ -34,8 +34,8 @@ import (
 	policyv1 "open-cluster-management.io/governance-policy-propagator/api/v1"
 	placementrulev1 "open-cluster-management.io/multicloud-operators-subscription/pkg/apis/apps/placementrule/v1"
 
-	meshv1alpha1 "github.com/morvencao/multicluster-mesh/apis/mesh/v1alpha1"
-	meshcontrollers "github.com/morvencao/multicluster-mesh/controllers/mesh"
+	meshv1alpha1 "github.com/morvencao/multicluster-mesh-operator/apis/mesh/v1alpha1"
+	meshcontrollers "github.com/morvencao/multicluster-mesh-operator/controllers/mesh"
 	//+kubebuilder:scaffold:imports
 )
 

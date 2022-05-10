@@ -2,8 +2,8 @@ domain: open-cluster-management.io
 layout:
 - go.kubebuilder.io/v3
 multigroup: true
-projectName: multicluster-mesh
-repo: github.com/morvencao/multicluster-mesh
+projectName: multicluster-mesh-operator
+repo: github.com/morvencao/multicluster-mesh-operator
 resources:
 - api:
     crdVersion: v1
@@ -12,7 +12,7 @@ resources:
   domain: open-cluster-management.io
   group: mesh
   kind: Mesh
-  path: github.com/morvencao/multicluster-mesh/apis/mesh/v1alpha1
+  path: github.com/morvencao/multicluster-mesh-operator/apis/mesh/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
@@ -21,7 +21,7 @@ resources:
   domain: open-cluster-management.io
   group: mesh
   kind: MeshFederation
-  path: github.com/morvencao/multicluster-mesh/apis/mesh/v1alpha1
+  path: github.com/morvencao/multicluster-mesh-operator/apis/mesh/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
@@ -30,6 +30,6 @@ resources:
   domain: open-cluster-management.io
   group: mesh
   kind: MeshDeployment
-  path: github.com/morvencao/multicluster-mesh/apis/mesh/v1alpha1
+  path: github.com/morvencao/multicluster-mesh-operator/apis/mesh/v1alpha1
   version: v1alpha1
 version: "3"

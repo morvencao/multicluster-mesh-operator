@@ -32,8 +32,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	meshv1alpha1 "github.com/morvencao/multicluster-mesh/apis/mesh/v1alpha1"
-	constants "github.com/morvencao/multicluster-mesh/pkg/constants"
+	meshv1alpha1 "github.com/morvencao/multicluster-mesh-operator/apis/mesh/v1alpha1"
+	constants "github.com/morvencao/multicluster-mesh-operator/pkg/constants"
 )
 
 // MeshDeploymentReconciler reconciles a MeshDeployment object

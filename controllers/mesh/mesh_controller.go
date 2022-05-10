@@ -36,12 +36,12 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
-	meshv1alpha1 "github.com/morvencao/multicluster-mesh/apis/mesh/v1alpha1"
+	meshv1alpha1 "github.com/morvencao/multicluster-mesh-operator/apis/mesh/v1alpha1"
 	maistrav1 "maistra.io/api/core/v1"
 	maistrav2 "maistra.io/api/core/v2"
 
-	constants "github.com/morvencao/multicluster-mesh/pkg/constants"
-	translate "github.com/morvencao/multicluster-mesh/pkg/translate"
+	constants "github.com/morvencao/multicluster-mesh-operator/pkg/constants"
+	translate "github.com/morvencao/multicluster-mesh-operator/pkg/translate"
 	configpolicyv1 "open-cluster-management.io/config-policy-controller/api/v1"
 	policyv1 "open-cluster-management.io/governance-policy-propagator/api/v1"
 	placementrulev1 "open-cluster-management.io/multicloud-operators-subscription/pkg/apis/apps/placementrule/v1"

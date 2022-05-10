@@ -5,7 +5,7 @@ set -o nounset
 set -o pipefail
 
 # corresponding to go mod init <module>
-MODULE=github.com/morvencao/multicluster-mesh
+MODULE=github.com/morvencao/multicluster-mesh-operator
 # api package
 APIS_PKG=apis
 # generated output package

@@ -1,12 +1,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: multicluster-mesh-rolebinding
+  name: multicluster-mesh-operator-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: multicluster-mesh-role
+  name: multicluster-mesh-operator-role
 subjects:
 - kind: ServiceAccount
-  name: multicluster-mesh
+  name: multicluster-mesh-operator
   namespace: open-cluster-management
