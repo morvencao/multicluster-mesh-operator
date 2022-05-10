@@ -1,6 +1,6 @@
 # Multicluster Mesh
 
-multicluster-mesh is an enhanced service mesh operator applied in [Red Hat Advanced Cluster Management for Kubernetes](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/). It is used to manages service meshes across multiple managed clusters and hybrid cloud providers.
+multicluster-mesh-operator is an enhanced service mesh operator applied in [Red Hat Advanced Cluster Management for Kubernetes](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/). It is used to manages service meshes across multiple managed clusters and hybrid cloud providers.
 
 ## Core Concepts
 
@@ -84,10 +84,10 @@ status:
 1. Build and push docker image:
 
 ```bash
-make docker-build docker-push IMG=quay.io/<your_quayio_username>/multicluster-mesh:latest
+make docker-build docker-push IMG=quay.io/<your_quayio_username>/multicluster-mesh-operator:latest
 ```
 
-2. Install the multicluster-mesh to the hub cluster:
+2. Install the multicluster-mesh-operator to the hub cluster:
 
 ```bash
 make deploy

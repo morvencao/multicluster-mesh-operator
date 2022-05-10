@@ -18,9 +18,9 @@ limitations under the License.
 package fake
 
 import (
-	clientset "github.com/morvencao/multicluster-mesh/apis/client/clientset/versioned"
-	meshv1alpha1 "github.com/morvencao/multicluster-mesh/apis/client/clientset/versioned/typed/mesh/v1alpha1"
-	fakemeshv1alpha1 "github.com/morvencao/multicluster-mesh/apis/client/clientset/versioned/typed/mesh/v1alpha1/fake"
+	clientset "github.com/morvencao/multicluster-mesh-operator/apis/client/clientset/versioned"
+	meshv1alpha1 "github.com/morvencao/multicluster-mesh-operator/apis/client/clientset/versioned/typed/mesh/v1alpha1"
+	fakemeshv1alpha1 "github.com/morvencao/multicluster-mesh-operator/apis/client/clientset/versioned/typed/mesh/v1alpha1/fake"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/discovery"

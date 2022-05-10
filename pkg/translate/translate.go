@@ -10,10 +10,10 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 
-	constants "github.com/morvencao/multicluster-mesh/pkg/constants"
-	utils "github.com/morvencao/multicluster-mesh/pkg/utils"
+	constants "github.com/morvencao/multicluster-mesh-operator/pkg/constants"
+	utils "github.com/morvencao/multicluster-mesh-operator/pkg/utils"
 
-	meshv1alpha1 "github.com/morvencao/multicluster-mesh/apis/mesh/v1alpha1"
+	meshv1alpha1 "github.com/morvencao/multicluster-mesh-operator/apis/mesh/v1alpha1"
 	maistrav1 "maistra.io/api/core/v1"
 	maistrav2 "maistra.io/api/core/v2"
 )

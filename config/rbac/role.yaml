@@ -4,7 +4,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   creationTimestamp: null
-  name: multicluster-mesh-role
+  name: multicluster-mesh-operator-role
 rules:
 - apiGroups:
   - mesh.open-cluster-management.io

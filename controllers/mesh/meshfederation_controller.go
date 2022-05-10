@@ -29,8 +29,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/go-logr/logr"
-	constants "github.com/morvencao/multicluster-mesh/pkg/constants"
-	graphql "github.com/morvencao/multicluster-mesh/pkg/graphql"
+	constants "github.com/morvencao/multicluster-mesh-operator/pkg/constants"
+	graphql "github.com/morvencao/multicluster-mesh-operator/pkg/graphql"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -38,7 +38,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	meshv1alpha1 "github.com/morvencao/multicluster-mesh/apis/mesh/v1alpha1"
+	meshv1alpha1 "github.com/morvencao/multicluster-mesh-operator/apis/mesh/v1alpha1"
 	maistrafederationv1 "maistra.io/api/federation/v1"
 	configpolicyv1 "open-cluster-management.io/config-policy-controller/api/v1"
 	policyv1 "open-cluster-management.io/governance-policy-propagator/api/v1"

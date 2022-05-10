@@ -2,31 +2,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: multicluster-mesh
+  name: multicluster-mesh-operator
   namespace: open-cluster-management
   labels:
-    app: multicluster-mesh
+    app: multicluster-mesh-operator
 spec:
   selector:
     matchLabels:
-      app: multicluster-mesh
+      app: multicluster-mesh-operator
   replicas: 1
   template:
     metadata:
       annotations:
-        kubectl.kubernetes.io/default-container: multicluster-mesh
+        kubectl.kubernetes.io/default-container: multicluster-mesh-operator
       labels:
-        app: multicluster-mesh
+        app: multicluster-mesh-operator
     spec:
       securityContext:
         runAsNonRoot: true
       containers:
       - command:
-        - /multicluster-mesh
+        - /multicluster-mesh-operator
         args:
         - --leader-elect
-        image: quay.io/morvencao/multicluster-mesh:latest
-        name: multicluster-mesh
+        image: quay.io/morvencao/multicluster-mesh-operator:latest
+        name: multicluster-mesh-operator
         securityContext:
           allowPrivilegeEscalation: false
         livenessProbe:
@@ -55,5 +55,5 @@ spec:
           requests:
             cpu: 10m
             memory: 64Mi
-      serviceAccountName: multicluster-mesh
+      serviceAccountName: multicluster-mesh-operator
       terminationGracePeriodSeconds: 10

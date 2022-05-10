@@ -31,7 +31,7 @@ import (
 	policyv1 "open-cluster-management.io/governance-policy-propagator/api/v1"
 	placementrulev1 "open-cluster-management.io/multicloud-operators-subscription/pkg/apis/apps/placementrule/v1"
 
-	constants "github.com/morvencao/multicluster-mesh/pkg/constants"
+	constants "github.com/morvencao/multicluster-mesh-operator/pkg/constants"
 )
 
 const (

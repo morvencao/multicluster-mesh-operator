@@ -37,12 +37,12 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
-	constants "github.com/morvencao/multicluster-mesh/pkg/constants"
-	graphql "github.com/morvencao/multicluster-mesh/pkg/graphql"
-	translate "github.com/morvencao/multicluster-mesh/pkg/translate"
+	constants "github.com/morvencao/multicluster-mesh-operator/pkg/constants"
+	graphql "github.com/morvencao/multicluster-mesh-operator/pkg/graphql"
+	translate "github.com/morvencao/multicluster-mesh-operator/pkg/translate"
 	policyv1 "open-cluster-management.io/governance-policy-propagator/api/v1"
 
-	meshv1alpha1 "github.com/morvencao/multicluster-mesh/apis/mesh/v1alpha1"
+	meshv1alpha1 "github.com/morvencao/multicluster-mesh-operator/apis/mesh/v1alpha1"
 )
 
 const (

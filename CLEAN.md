@@ -6,10 +6,10 @@
 oc -n open-cluster-management delete meshfederation,meshdeployment,mesh --all
 ```
 
-2. Scale the replicas of multicluster-mesh to `0`:
+2. Scale the replicas of multicluster-mesh-operator to `0`:
 
 ```bash
-oc -n open-cluster-management scale deploy/multicluster-mesh --replicas 0
+oc -n open-cluster-management scale deploy/multicluster-mesh-operator --replicas 0
 ```
 
 3. Verify the resources in hub clusters are creaned up:

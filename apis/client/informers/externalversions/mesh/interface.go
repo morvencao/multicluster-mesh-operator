@@ -18,8 +18,8 @@ limitations under the License.
 package mesh
 
 import (
-	internalinterfaces "github.com/morvencao/multicluster-mesh/apis/client/informers/externalversions/internalinterfaces"
-	v1alpha1 "github.com/morvencao/multicluster-mesh/apis/client/informers/externalversions/mesh/v1alpha1"
+	internalinterfaces "github.com/morvencao/multicluster-mesh-operator/apis/client/informers/externalversions/internalinterfaces"
+	v1alpha1 "github.com/morvencao/multicluster-mesh-operator/apis/client/informers/externalversions/mesh/v1alpha1"
 )
 
 // Interface provides access to each of this group's versions.
